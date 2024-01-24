@@ -15,6 +15,24 @@ const containerClassName = mergeStyles({
   maxWidth: '900px',
 });
 
+const commentContainerClassName = mergeStyles({
+  marginTop: '10px',
+  padding: '10px',
+  border: '1px solid #cccccc',
+  borderRadius: '4px',
+});
+
+const commentContentClassName = mergeStyles({
+  fontSize: '14px',
+  lineHeight: '1.6',
+});
+
+const commentDateClassName = mergeStyles({
+  fontSize: '10px',
+  color: '#777777',
+});
+
+
 interface SupportCaseAndComments {
   id: number;
   title: string;
@@ -152,12 +170,13 @@ const CaseDetails = () => {
                 <DefaultButton text="Edit" onClick={handleEditCase} disabled={isLoading} />
                 <DefaultButton text="Delete" onClick={handleDeleteCase} disabled={isLoading} />
               </Stack>
+              
               <h2>Comments</h2>
-              {caseDetails?.comments.map((comment) => (
-              <div key={comment.id}>
-                <p>{comment.content}</p>
-                <span>{comment.created_at}</span>
-                </div>
+            {caseDetails?.comments.map((comment) => (
+              <div key={comment.id} className={commentContainerClassName}>
+                <p className={commentContentClassName}>{comment.content}</p>
+                <span className={commentDateClassName}>{new Date(comment.created_at).toLocaleString()}</span>
+              </div>
               ))}
             </>
           )
