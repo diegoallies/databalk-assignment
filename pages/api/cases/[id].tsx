@@ -23,7 +23,11 @@ export default async function caseHandler(req: NextApiRequest, res: NextApiRespo
         // Fetch the case with the given ID from the database
         const caseData = await db.get('SELECT * FROM support_cases WHERE id = ?', [id]);
         if (caseData) {
-          res.json(caseData);
+          // Fetch the comments associated with the case
+          const comments = await db.all('SELECT * FROM comments WHERE case_id = ?', [id]);
+          // Include comments in the response
+          res.json({ ...caseData, comments });
+          console.log(...caseData, comments, '...caseData, comments')
         } else {
           res.status(404).json({ message: 'Case not found' });
         }

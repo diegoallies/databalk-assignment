@@ -42,3 +42,11 @@ footer {
   color: #4979ff;
   text-decoration: underline;
 }
+
+.modalContainer {
+  padding: 2vh;
+}
+
+.modalContainer.btn {
+  margin-top: 5px;
+}

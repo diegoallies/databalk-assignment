@@ -34,8 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { userId } = decoded;
 
     if (req.method === 'GET') {
-      // Fetch user's support cases
-      const cases = await db.all('SELECT * FROM support_cases WHERE user_id = ?', userId);
+      // Fetch all support cases
+      const cases = await db.all('SELECT * FROM support_cases');
       res.status(200).json({ cases });
     } else if (req.method === 'POST') {
       // Create a new support case
