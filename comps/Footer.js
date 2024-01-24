@@ -1,7 +1,7 @@
 const Footer = () => {
   return (
     <footer>
-      Copyright 2021 Ninja List
+      Copyright 2024 Diego Allies
     </footer>
   );
 }
