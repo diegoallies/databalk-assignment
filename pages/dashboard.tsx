@@ -40,7 +40,7 @@ interface SupportCase {
   title: string;
   description: string;
   status: string;
-  creationDate: string;
+  created_at: string;
 }
 
 export default function Dashboard() {
@@ -87,14 +87,14 @@ export default function Dashboard() {
     {
       key: 'column3',
       name: 'Creation Date',
-      fieldName: 'creationDate',
+      fieldName: 'created_at',
       minWidth: 100,
       maxWidth: 200,
       isResizable: true,
       onRender: (item: SupportCase) => {
-        // Check if creationDate is a valid string, then parse and format
-        if (item.creationDate) {
-          const date = parseISO(item.creationDate);
+        // Check if created_at is a valid string, then parse and format
+        if (item.created_at) {
+          const date = parseISO(item.created_at);
           return <span>{isValid(date) ? format(date, 'PPP p') : 'Invalid date'}</span>;
         } else {
           return <span>Unknown date</span>; // or some placeholder if the date is undefined
@@ -134,7 +134,7 @@ export default function Dashboard() {
         title: newCaseTitle,
         description: newCaseDescription,
         status: 'Open', // Assuming new cases default to 'Open' status
-        creationDate: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+        created_at: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
       }]);
       setNewCaseTitle('');
       setNewCaseDescription('');
