@@ -171,7 +171,7 @@ const CaseDetails = () => {
                 <DefaultButton text="Delete" onClick={handleDeleteCase} disabled={isLoading} />
               </Stack>
               
-              <h2>Comments</h2>
+              <h2 className='nmn'>Comments</h2>
             {caseDetails?.comments.map((comment) => (
               <div key={comment.id} className={commentContainerClassName}>
                 <p className={commentContentClassName}>{comment.content}</p>
