@@ -1,34 +1,78 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Support App
+
+The Support App is a full-stack application built with Next.js, TypeScript, and Microsoft Fluent UI. The platform enables users to securely log in, create and view support cases, comment on them, and manage their account information.
 
 ## Getting Started
 
-First, run the development server:
+Follow these instructions to get your copy of the project up and running on your local machine for development and testing purposes.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ensure you have the following installed:
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- Node.js: Install from [Node.js](https://nodejs.org/)
+- Git: Install from [Git](https://git-scm.com/)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+### Installation
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+To set up your development environment:
 
-## Learn More
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/diegoallies/databalk-assignment.git
+   cd databalk-assignment
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+4. Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Deploy on Vercel
+## Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Login Page**: Secure login with validation.
+- **Dashboard**: Overview of cases with the ability to manage them.
+- **Support Case Creation**: Create new cases with title, description, and attachments.
+- **Case Detail Page**: Detailed view with comments functionality.
+- **User Authentication**: Implemented using Next.js libraries.
+- **Database Integration**: Included SQLite database within the codebase.
+- **API Endpoints**: Handle user operations and case management.
+- **Authorization**: Users access and modify only their data.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Technology Stack
+
+- **[Next.js](https://nextjs.org/)**: The React framework for production.
+- **[TypeScript](https://www.typescriptlang.org/)**: JavaScript with syntax for types.
+- **[Microsoft Fluent UI](https://developer.microsoft.com/en-us/fluentui#/)**: A collection of UX design frameworks.
+
+## Project Structure
+
+- `pages/`: Page components including API route handlers.
+- `components/`: Reusable React components.
+- `public/`: Static assets such as images.
+- `styles/`: CSS and styling files.
+- `lib/`: Utility and helper functions.
+- `database/`: SQLite database files including schema migrations.
+
+## Security
+
+We employ best practices for security, such as hashing passwords and using JWT for session management.
+
+## Contributing
+
+For contributions, please submit a pull request with a clear description of the changes you've made.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/diegoallies/databalk-assignment/blob/main/LICENSE) file for details.
+
+## Author
+
+- **Diego Allies**
