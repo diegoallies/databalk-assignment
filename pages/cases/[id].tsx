@@ -84,20 +84,28 @@ const CaseDetails = () => {
       fetchCaseDetails();
     }
   }, [id]); // Add `id` to the dependency array so the effect re-runs when `id` becomes defined
-
+  
   const handleAddComment = async (event) => {
-    event.preventDefault(); // Prevent the default form submission behavior
+    event.preventDefault();
     setIsLoading(true);
-    setError(''); // Assuming you have an error state similar to the login page
+    setError('');
+  
+    // Retrieve `user_id` and `user_name` from localStorage and include them in the POST request
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
   
     try {
       const response = await fetch('/api/comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // Include your Bearer token here if authentication is required
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
           case_id: id, // Ensure `id` is a number, not a string
+          user_id: userId,
+          user_name: userName,
           content: newComment,
         }),
       });
@@ -105,20 +113,19 @@ const CaseDetails = () => {
       if (response.ok) {
         const addedComment = await response.json();
         setComments([...comments, addedComment]);
-        setNewComment(''); // Clear input after successful submission
+        setNewComment('');
         alert('Comment added successfully!');
-        // You might want to refetch case comments here if your UI depends on the fresh data
       } else {
         const errorData = await response.json();
-        setError(errorData.message || 'An error occurred');
+        setError(errorData.message || 'An error occurred while posting the comment.');
       }
-  
     } catch (error) {
       console.error(error);
       setError('An error occurred while posting the comment.');
     } finally {
       setIsLoading(false);
     }
+    
   };
 
 

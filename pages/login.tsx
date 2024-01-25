@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Stack, TextField, PrimaryButton, DefaultButton, Text, IStackStyles, IStackTokens, ITextStyles } from '@fluentui/react';
+import { Stack, TextField, PrimaryButton, DefaultButton, Text } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
+import { initializeIcons } from '@fluentui/react/lib/Icons';
 
-const stackStyles: Partial<IStackStyles> = { root: { width: '100%', maxWidth: '300px', margin: '0 auto' } };
-const stackTokens: IStackTokens = { childrenGap: 15 };
-const textStyles: Partial<ITextStyles> = { root: { marginBottom: '2rem' } };
+const stackStyles = { root: { width: '100%', maxWidth: '300px', margin: '0 auto' } };
+const stackTokens = { childrenGap: 15 };
+const textStyles = { root: { marginBottom: '2rem' } };
 
 const Login = () => {
   const router = useRouter();
@@ -29,7 +30,9 @@ const Login = () => {
       const data = await response.json();
       console.log(`${isLogin ? 'Login' : 'Register'} Successful`, data);
       localStorage.setItem('token', data.token);
-      localStorage.setItem('userEmail', email); 
+      localStorage.setItem('username', data.user_name);
+      localStorage.setItem('userEmail', email);
+      localStorage.setItem('userId', data.user_id);
       router.push('/dashboard');
     } else {
       const errorData = await response.json();
@@ -38,7 +41,19 @@ const Login = () => {
   };
 
   return (
-    <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={{ root: { margin: '0 auto', textAlign: 'center', color: '#605e5c' } }}>
+    <Stack 
+      horizontalAlign="center" 
+      verticalAlign="center" 
+      verticalFill 
+      styles={{
+        root: { 
+          margin: '0 auto', 
+          textAlign: 'center', 
+          color: '#605e5c',
+          height: '100vh'
+        }
+      }}
+    >
       <Text variant="xxLarge" styles={textStyles}>{isLogin ? 'Login' : 'Register'}</Text>
       <form onSubmit={handleSubmit}>
         <Stack tokens={stackTokens} styles={stackStyles}>
