@@ -16,20 +16,21 @@ const Profile = () => {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.user_email) {
-        setUserProfile({
-          userName: data.user_name || '',
-          email: data.user_email || '',
-        });
-      } else {
-        throw new Error('User data could not be loaded.');
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
       }
+      return response.json();
+    })
+    .then(data => {
+      setUserProfile({
+        userName: data.user_name || '',
+        email: data.email || '',
+      });
     })
     .catch(error => {
       console.error('Error loading user profile:', error);
-      setError(error.message);
+      setError('Error loading user profile. Please try again later.');
     })
     .finally(() => setIsLoading(false));
   }, []);
