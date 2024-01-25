@@ -42,10 +42,10 @@ export default function Dashboard() {
             onRender: (item: SupportCase) => <a style={{ cursor: 'pointer' }} onClick={() => router.push(`/cases/${item.id}`)}>{item.title}</a>
         },
         { key: 'status', name: 'Status', fieldName: 'status', minWidth: 50, maxWidth: 100, isResizable: true,
-        onRender: (item: SupportCase) => <a style={{ cursor: 'pointer' }} onClick={() => router.push(`/cases/${item.id}`)}>{item.title}</a> },
+        onRender: (item: SupportCase) => <a style={{ cursor: 'pointer' }} onClick={() => router.push(`/cases/${item.id}`)}>{item.status}</a> },
         { key: 'created_at', name: 'Creation Date', fieldName: 'created_at', minWidth: 100, maxWidth: 200, isResizable: true,
-        onRender: (item: SupportCase) => <a style={{ cursor: 'pointer' }} onClick={() => router.push(`/cases/${item.id}`)}>{item.title}</a> }
-        // other columns here
+        onRender: (item: SupportCase) => <a style={{ cursor: 'pointer' }} onClick={() => router.push(`/cases/${item.id}`)}>{item.created_at}</a> }
+
     ];
 
     const handleCreateCase = async () => {
