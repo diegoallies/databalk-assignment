@@ -55,7 +55,7 @@ To set up your development environment:
 ## Project Structure
 
 - `pages/`: Page components including API route handlers.
-- `components/`: Reusable React components.
+- `comps/`: Reusable React components.
 - `public/`: Static assets such as images.
 - `styles/`: CSS and styling files.
 - `lib/`: Utility and helper functions.

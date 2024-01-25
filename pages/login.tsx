@@ -33,7 +33,7 @@ const Login = () => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.user_name);
         localStorage.setItem('userEmail', data.user_email);
-        localStorage.setItem('userId', data.user_id.toString());
+        localStorage.setItem('userId', data.user_id);
       }
       router.push('/dashboard');
     } else {
