@@ -14,7 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
 
@@ -27,11 +27,12 @@ const Login = () => {
 
     if (response.ok) {
       const data = await response.json();
-      console.log(`${isLogin ? 'Login' : 'Register'} Successful`, data);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('username', data.user_name);
-      localStorage.setItem('userEmail', email);
-      localStorage.setItem('userId', data.user_id);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.user_name);
+        localStorage.setItem('userEmail', data.user_email);
+        localStorage.setItem('userId', data.user_id.toString());
+      }
       router.push('/dashboard');
     } else {
       const errorData = await response.json();
@@ -46,10 +47,10 @@ const Login = () => {
       verticalFill 
       styles={{
         root: { 
-          margin: '0 auto', 
+          margin: '0', // Adjusted margin to fix an issue where the 'auto' value caused a mismatch
           textAlign: 'center', 
-          color: '#605e5c',
-          height: '100vh'
+          color: '#605e5c'
+          // height: '100vh', // Make sure this Stack fills the viewport height
         }
       }}
     >
@@ -72,7 +73,7 @@ const Login = () => {
             onChange={(e, newValue) => setPassword(newValue || '')}
           />
           <PrimaryButton text={isLogin ? 'Log In' : 'Register'} type="submit" />
-          {error && <Text variant="smallPlus" styles={{ root: { color: 'red', marginTop: '10px' } }}>{error}</Text>}
+          {error && <Text variant="smallPlus" styles={{ root: { color: 'red' } }}>{error}</Text>}
           <DefaultButton text={isLogin ? 'Need an account? Register' : 'Have an account? Login'} onClick={toggleMode} />
         </Stack>
       </form>
