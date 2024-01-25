@@ -12,11 +12,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
-        const { email, password } = req.body;
+        const { email, password, user_name } = req.body;
         
         // Basic validation
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Email and password are required' });
+        if (!email || !password || !user_name) {
+            return res.status(400).json({ message: 'Email, password, and username are required' });
         }
 
         // Using path.resolve to get the absolute path to the database file
@@ -40,9 +40,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const result = await db.run(
-            `INSERT INTO users (email, password) VALUES (?, ?)`,
+            `INSERT INTO users (email, password, user_name) VALUES (?, ?, ?)`,
             email.toLowerCase(), // Store emails in lowercase to ensure uniqueness
-            hashedPassword
+            hashedPassword,
+            user_name
         );
 
         // Create a token for the new user
@@ -53,6 +54,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             { expiresIn: '2h' }
         );
 
+        // Respond with the user_id and the JWT token
         res.status(201).json({ userId, token });
     } catch (error) {
         console.error(error);

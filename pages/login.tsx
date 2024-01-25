@@ -1,29 +1,35 @@
-// pages/login.tsx
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { Stack, TextField, PrimaryButton, DefaultButton, Text, IStackStyles, IStackTokens, ITextStyles } from '@fluentui/react';
+import { useBoolean } from '@fluentui/react-hooks';
+
+const stackStyles: Partial<IStackStyles> = { root: { width: '100%', maxWidth: '300px', margin: '0 auto' } };
+const stackTokens: IStackTokens = { childrenGap: 15 };
+const textStyles: Partial<ITextStyles> = { root: { marginBottom: '2rem' } };
 
 const Login = () => {
   const router = useRouter();
-  const [mode, setMode] = useState('login'); // 'login' or 'register'
+  const [isLogin, { toggle: toggleMode }] = useBoolean(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
 
-    const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/register';
+    const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
     const response = await fetch(endpoint, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
     if (response.ok) {
       const data = await response.json();
-      console.log(`${mode} Successful`, data);
-      localStorage.setItem('token', data.token);  // Save the token securely
+      console.log(`${isLogin ? 'Login' : 'Register'} Successful`, data);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userEmail', email); 
       router.push('/dashboard');
     } else {
       const errorData = await response.json();
@@ -31,37 +37,32 @@ const Login = () => {
     }
   };
 
-  const toggleMode = () => {
-    setMode(mode === 'login' ? 'register' : 'login');
-  };
-
   return (
-    <div>
-      <h2>{mode === 'login' ? 'Login' : 'Register'}</h2>
-      {error && <p>{error}</p>}
+    <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={{ root: { margin: '0 auto', textAlign: 'center', color: '#605e5c' } }}>
+      <Text variant="xxLarge" styles={textStyles}>{isLogin ? 'Login' : 'Register'}</Text>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">{mode === 'login' ? 'Log In' : 'Register'}</button>
-        <button type="button" onClick={toggleMode}>
-          {mode === 'login' ? 'Need an account? Register' : 'Have an account? Login'}
-        </button>
+        <Stack tokens={stackTokens} styles={stackStyles}>
+          <TextField
+            label="Email"
+            type="email"
+            required
+            value={email}
+            onChange={(e, newValue) => setEmail(newValue || '')}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            canRevealPassword
+            required
+            value={password}
+            onChange={(e, newValue) => setPassword(newValue || '')}
+          />
+          <PrimaryButton text={isLogin ? 'Log In' : 'Register'} type="submit" />
+          {error && <Text variant="smallPlus" styles={{ root: { color: 'red', marginTop: '10px' } }}>{error}</Text>}
+          <DefaultButton text={isLogin ? 'Need an account? Register' : 'Have an account? Login'} onClick={toggleMode} />
+        </Stack>
       </form>
-    </div>
+    </Stack>
   );
 };
 

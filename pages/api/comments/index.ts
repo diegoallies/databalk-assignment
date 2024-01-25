@@ -1,44 +1,67 @@
-// pages/api/comments/index.js
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { Stack, TextField, PrimaryButton, DefaultButton, Text } from '@fluentui/react';
+import { useBoolean } from '@fluentui/react-hooks';
 
-import { open } from 'sqlite';
-import sqlite3 from 'sqlite3';
-import path from 'path';
-import type { NextApiRequest, NextApiResponse } from 'next';
+const Login = () => {
+  const router = useRouter();
+  const [isLogin, { toggle: toggleMode }] = useBoolean(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const db = await open({
-    filename: path.join(process.cwd(), 'database', 'my-support-app.db'),
-    driver: sqlite3.Database,
-  });
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
 
-  try {
-    if (req.method === 'POST') {
-      // Extract caseId and content from the request body
-      const { caseId, content } = req.body;
-      if (!caseId || !content) {
-        res.status(400).json({ message: 'caseId and content are required' });
-        return;
+    const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(`${isLogin ? 'Login' : 'Register'} Successful`, data);
+      localStorage.setItem('token', data.token);  // Save the token securely
+      localStorage.setItem('userEmail', email);  // Saving user email to localStorage
+      if (isLogin) {
+        router.push('/dashboard');
       }
-
-      // Insert the new comment into the database
-      const result = await db.run(
-        'INSERT INTO comments (case_id, content, created_at) VALUES (?, ?, datetime("now"))',
-        [caseId, content]
-      );
-
-      // Get the newly inserted comment
-      const newComment = await db.get('SELECT * FROM comments WHERE id = ?', [result.lastID]);
-
-      // Send the new comment back to the client
-      res.status(201).json(newComment);
     } else {
-      res.setHeader('Allow', ['POST']);
-      res.status(405).end(`Method ${req.method} Not Allowed`);
+      const errorData = await response.json();
+      setError(errorData.message || 'An error occurred');
     }
-  } catch (error) {
-    console.error('Database error:', error);
-    res.status(500).json({ message: 'Failed to insert new comment', error });
-  } finally {
-    await db.close();
-  }
-}
+  };
+
+  return (
+    <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={{ root: { margin: '0 auto', textAlign: 'center', color: '#605e5c' } }}>
+      <Text variant="xxLarge" styles={{ root: { marginBottom: '2rem' } }}>{isLogin ? 'Login' : 'Register'}</Text>
+      <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: '300px' }}>
+        <Stack tokens={{ childrenGap: 15 }}>
+          <TextField
+            label="Email"
+            type="email"
+            required
+            value={email}
+            onChange={(e, newValue) => setEmail(newValue || '')}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            canRevealPassword
+            required
+            value={password}
+            onChange={(e, newValue) => setPassword(newValue || '')}
+          />
+          <PrimaryButton text={isLogin ? 'Log In' : 'Register'} type="submit" />
+          {error && <Text variant="smallPlus" styles={{ root: { color: 'red' } }}>{error}</Text>}
+          <DefaultButton text={isLogin ? 'Need an account? Register' : 'Have an account? Login'} onClick={toggleMode} />
+        </Stack>
+      </form>
+    </Stack>
+  );
+};
+
+export default Login;
