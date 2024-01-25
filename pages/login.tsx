@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Stack, TextField, PrimaryButton, DefaultButton, Text } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { initializeIcons } from '@fluentui/react/lib/Icons';
 
 const stackStyles = { root: { width: '100%', maxWidth: '300px', margin: '0 auto' } };
 const stackTokens = { childrenGap: 15 };

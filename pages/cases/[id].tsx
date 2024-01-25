@@ -6,32 +6,21 @@ import {
   PrimaryButton,
   DefaultButton,
   Stack,
+  Text,
 } from '@fluentui/react';
 import { mergeStyles } from '@fluentui/react/lib/Styling';
 
-const containerClassName = mergeStyles({
-  padding: '20px',
-  margin: '0 auto',
-  maxWidth: '900px',
-});
-
-const commentContainerClassName = mergeStyles({
+// Define styles outside of the component
+const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: '100%' } };
+const columnStackStyles: IStackStyles = { root: { width: '100%', maxWidth: '50%' } };
+const commentsSectionStyle: React.CSSProperties = { marginTop: '20px' };
+const commentBoxStyle: React.CSSProperties = {
   marginTop: '10px',
   padding: '10px',
   border: '1px solid #cccccc',
   borderRadius: '4px',
-});
-
-const commentContentClassName = mergeStyles({
-  fontSize: '14px',
-  lineHeight: '1.6',
-});
-
-const commentDateClassName = mergeStyles({
-  fontSize: '10px',
-  color: '#777777',
-});
-
+  background: '#f3f2f1',
+};
 
 interface SupportCaseAndComments {
   id: number;
@@ -45,10 +34,10 @@ interface SupportCaseAndComments {
 interface Comment {
   id: number;
   content: string;
+  user_name: string; // Ensure that user_name is part of the Comment interface
   case_id: number;
   created_at: string;
 }
-
 const CaseDetails = () => {
   const router = useRouter();
   const { id } = router.query;
@@ -84,7 +73,7 @@ const CaseDetails = () => {
       fetchCaseDetails();
     }
   }, [id]); // Add `id` to the dependency array so the effect re-runs when `id` becomes defined
-  
+
   const handleAddComment = async (event) => {
     event.preventDefault();
     setIsLoading(true);
@@ -172,77 +161,89 @@ const CaseDetails = () => {
   };
 
   return (
-    <div className={containerClassName}>
-      <Stack tokens={{ childrenGap: 15 }}>
-        <PrimaryButton text="Back to Dashboard" onClick={() => router.push('/dashboard')} />
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          caseDetails && (
-            <>
-              <h1>Case Details</h1>
-              <TextField label="ID" value={caseDetails.id.toString()} disabled />
-              <TextField
-                label="Title"
-                value={caseDetails.title}
-                onChange={(_, newValue) =>
-                  setCaseDetails({ ...caseDetails, title: newValue || caseDetails.title })
-                }
-                disabled={isLoading}
-              />
-              <TextField
-                label="Description"
-                value={caseDetails.description}
-                onChange={(_, newValue) =>
-                  setCaseDetails({ ...caseDetails, description: newValue || caseDetails.description })
-                }
-                disabled={isLoading}
-                multiline
-                autoAdjustHeight
-              />
-              <TextField
-                label="Status"
-                value={caseDetails.status}
-                onChange={(_, newValue) =>
-                  setCaseDetails({ ...caseDetails, status: newValue || caseDetails.status })
-                }
-                disabled={isLoading}
-              />
-              <TextField
-                label="Creation Date"
-                value={caseDetails.created_at}
-                disabled={true}
-              />
-              <Stack horizontal tokens={{ childrenGap: 10 }}>
-                <DefaultButton text="Edit" onClick={handleEditCase} disabled={isLoading} />
-                <DefaultButton text="Delete" onClick={handleDeleteCase} disabled={isLoading} />
-              </Stack>
-              
-              <h2 className='nmn'>Comments</h2>
-                <div>
-                <form onSubmit={handleAddComment}>
+    <Stack tokens={{ childrenGap: 15 }} styles={{ root: { padding: '20px', margin: '0 auto', maxWidth: '900px' } }}>
+      <PrimaryButton text="Back to Dashboard" onClick={() => router.push('/dashboard')} />
+
+      {isLoading ? <Text>Loading...</Text> : (
+        caseDetails && (
+          <>
+            <Stack horizontal tokens={{ childrenGap: 50 }} styles={{ root: { width: '100%' } }}>
+              {/* Left column for editable fields */}
+              <Stack tokens={{ childrenGap: 15 }} styles={columnStackStyles}>
                 <TextField
-                  label="New Comment"
-                  multiline
-                  autoAdjustHeight
-                  value={newComment}
-                  onChange={(_, newValue) => setNewComment(newValue || '')}
+                  label="Title"
+                  styles={textFieldStyles}
+                  value={caseDetails.title}
+                  onChange={(_, newValue) =>
+                    setCaseDetails({ ...caseDetails, title: newValue || caseDetails.title })
+                  }
                   disabled={isLoading}
                 />
-             <PrimaryButton text="Add Comment" type="submit" disabled={isLoading || !newComment.trim()} />
-             </form>
-            </div>
-            {caseDetails?.comments.map((comment) => (
-              <div key={comment.id} className={commentContainerClassName}>
-                <p className={commentContentClassName}>{comment.content}</p>
-                <span className={commentDateClassName}>{new Date(comment.created_at).toLocaleString()}</span>
-              </div>
+                <TextField
+                  label="Description"
+                  styles={textFieldStyles}
+                  value={caseDetails.description}
+                  onChange={(_, newValue) =>
+                    setCaseDetails({ ...caseDetails, description: newValue || caseDetails.description })
+                  }
+                  disabled={isLoading}
+                  multiline
+                  autoAdjustHeight
+                />
+                <TextField
+                  label="Status"
+                  styles={textFieldStyles}
+                  value={caseDetails.status}
+                  onChange={(_, newValue) =>
+                    setCaseDetails({ ...caseDetails, status: newValue || caseDetails.status })
+                  }
+                  disabled={isLoading}
+                />
+                <Stack horizontal tokens={{ childrenGap: 10 }}>
+                  <DefaultButton text="Edit" onClick={handleEditCase} disabled={isLoading} />
+                  <DefaultButton text="Delete" onClick={handleDeleteCase} disabled={isLoading} />
+                </Stack>
+              </Stack>
+
+              {/* Right column for unchangeable fields */}
+              <Stack tokens={{ childrenGap: 15 }} styles={columnStackStyles}>
+                <TextField label="Case ID" styles={textFieldStyles} value={caseDetails.id.toString()} disabled />
+                <TextField
+                  label="Creation Date"
+                  styles={textFieldStyles}
+                  value={new Date(caseDetails.created_at).toLocaleString()}
+                  disabled
+                />
+              </Stack>
+            </Stack>
+
+            <Stack styles={{ root: commentsSectionStyle }}>
+              <Text variant="large" styles={{ root: { marginBottom: '10px' } }}>Comments</Text>
+              <form onSubmit={handleAddComment}>
+                <Stack tokens={{ childrenGap: 5 }}>
+                  <TextField
+                    label="New Comment"
+                    multiline
+                    autoAdjustHeight
+                    value={newComment}
+                    onChange={(_, newValue) => setNewComment(newValue || '')}
+                    disabled={isLoading}
+                  />
+                  <PrimaryButton text="Add Comment" type="submit" disabled={isLoading || !newComment.trim()} />
+                </Stack>
+              </form>
+              {caseDetails.comments.map((comment) => (
+                <div key={comment.id} style={commentBoxStyle}>
+                  <Text variant="smallPlus"><strong>{comment.user_name}:</strong> {comment.content}</Text>
+                  <br />
+                  <Text variant="small" styles={{ root: { color: '#777777', fontSize: '10px' } }}>{new Date(comment.created_at).toLocaleString()}</Text>
+                </div>
               ))}
-            </>
-          )
-        )}
-      </Stack>
-    </div>
+            </Stack>
+          </>
+        )
+      )}
+    </Stack>
   );
 };
 
