@@ -71,10 +71,12 @@ export default function Dashboard() {
             <h1>Support Case Dashboard</h1>
             {error && <p>{error}</p>}
             <Modal titleAriaId="Create Case" isOpen={isModalOpen} onDismiss={() => setIsModalOpen(false)} isBlocking={false} className={classNames.modalContainer}>
-                <h2>Create New Case</h2>
+                <div className="modal1"><h2>Create New Case</h2>
                 <TextField label="Case Title" value={newCaseTitle} onChange={(_, value) => setNewCaseTitle(value || '')} />
                 <TextField label="Case Description" multiline rows={3} value={newCaseDescription} onChange={(_, value) => setNewCaseDescription(value || '')} />
-                <PrimaryButton text="Create Case" onClick={handleCreateCase} />
+                <br />
+                <PrimaryButton text="Create Case" onClick={handleCreateCase} /></div>
+                
             </Modal>
             <DetailsList items={supportCases} columns={columns} setKey="set" layoutMode={DetailsListLayoutMode.fixedColumns} selectionMode={SelectionMode.none} />
             <br></br>
