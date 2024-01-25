@@ -77,3 +77,4 @@ const db = new sqlite3.Database(databasePath, (err: Error | null ) => {
 
 
 
+export {};
