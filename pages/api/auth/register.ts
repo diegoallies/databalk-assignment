@@ -8,60 +8,65 @@ import path from 'path';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        // This will set the "Allow" header correctly before returning.
+        res.setHeader('Allow', ['POST']);
+        return res.status(405).end('Method Not Allowed');
     }
 
-    try {
-        const { email, password, user_name } = req.body;
-        
-        // Basic validation
-        if (!email || !password || !user_name) {
-            return res.status(400).json({ message: 'Email, password, and username are required' });
-        }
+    const { email, password, user_name } = req.body;
+    
+    // Basic validation
+    if (!email || !password || !user_name) {
+        return res.status(400).json({ message: 'Email, password, and username are required' });
+    }
 
-        // Using path.resolve to get the absolute path to the database file
-        const dbPath = path.resolve('database/my-support-app.db');
-        const db = await open({
+    // Using path.resolve to get the absolute path to the database file
+    const dbPath = path.resolve('database/my-support-app.db');
+    
+    let db;
+    try {
+        db = await open({
             filename: dbPath,
             driver: sqlite3.Database
         });
 
-        // Check if the user already exists
-        const existingUser = await db.get(
-            `SELECT id FROM users WHERE email = ?`,
-            email.toLowerCase()
-        );
+        // Rest of your logic...
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+        return; // Add return here
+    }
+
+    try {
+        const existingUser = await db.get(`SELECT id FROM users WHERE email = ?`, email.toLowerCase());
 
         if (existingUser) {
             return res.status(409).json({ message: 'User already exists with this email' });
         }
 
-        // Hash the user's password before storing it in the database
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const result = await db.run(
             `INSERT INTO users (email, password, user_name) VALUES (?, ?, ?)`,
-            email.toLowerCase(), // Store emails in lowercase to ensure uniqueness
+            email.toLowerCase(),
             hashedPassword,
             user_name
         );
 
-        // Create a token for the new user
         const userId = result.lastID;
         const token = jwt.sign(
             { userId, email: email.toLowerCase() },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || '',
             { expiresIn: '2h' }
         );
 
-        // Respond with the user_id and the JWT token
         res.status(201).json({ userId, token });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     } finally {
         if (db) {
-            db.close();
+            await db.close(); // Make sure to await the db.close() call
         }
     }
-};
+}
