@@ -9,6 +9,8 @@ import {
   Text,
 } from '@fluentui/react';
 import { mergeStyles } from '@fluentui/react/lib/Styling';
+import { IStackStyles } from '../../node_modules/@fluentui/react/lib/Stack';
+import { ITextFieldStyles } from '../../node_modules/@fluentui/react/lib/TextField';
 
 // Define styles outside of the component
 const textFieldStyles: Partial<ITextFieldStyles> = { fieldGroup: { width: '100%' } };
